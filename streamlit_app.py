@@ -141,7 +141,7 @@ orientation = st.sidebar.radio(
 # User input for stack options
 stacked = st.sidebar.radio(
     "Stack options",
-    ["stacked", "not stacked", "normalize", "center", "zero"],
+    ["stacked", "not stacked", "normalize", "center"],
     disabled=disabled_stack,
     help="Select the stack option for the chart"
     if not disabled_stack
