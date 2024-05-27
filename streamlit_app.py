@@ -111,9 +111,15 @@ qp = st.query_params.to_dict()
 disabled_horizontal = False
 disabled_orientation = False
 disabled_stack = False
+disabled_bar = False
+disabled_area = False
 
 if qp.get("type") == "area":
-    disabled_horizontal = True
+    disabled_horizontal = False
+    disabled_bar = True
+if qp.get("type") == "bar":
+    # disabled_horizontal = False
+    disabled_area = True
 if qp.get("feature") == "stack":
     disabled_orientation = True
 if qp.get("feature") == "horizontal":
@@ -159,14 +165,13 @@ stack_option_map = {
     "not stacked": None,
     "normalize": "normalize",
     "center": "center",
-    "zero": "zero",
 }
 stack_option = stack_option_map[stacked]
 
 with tab1:
     if show_data:
         col1, col2 = st.columns(2)
-        if not disabled_horizontal:
+        if not disabled_horizontal and not disabled_bar:
             col1.dataframe(data, use_container_width=True)
             col1.dataframe(chart_data, use_container_width=True, height=300)
 
@@ -182,19 +187,20 @@ with tab1:
                 ),
                 use_container_width=True,
             )
-        col1.dataframe(area_chart_one_data, use_container_width=True)
-        col1.dataframe(area_chart_two_data, use_container_width=True, height=350)
+        if not disabled_area:
+            col1.dataframe(area_chart_one_data, use_container_width=True)
+            col1.dataframe(area_chart_two_data, use_container_width=True, height=350)
 
-        col2.altair_chart(
-            create_area_chart(area_chart_one_data, stack_option),
-            use_container_width=True,
-        )
-        col2.altair_chart(
-            create_area_chart(area_chart_two_data, stack_option),
-            use_container_width=True,
-        )
+            col2.altair_chart(
+                create_area_chart(area_chart_one_data, stack_option),
+                use_container_width=True,
+            )
+            col2.altair_chart(
+                create_area_chart(area_chart_two_data, stack_option),
+                use_container_width=True,
+            )
     else:
-        if not disabled_horizontal:
+        if not disabled_horizontal and not disabled_bar:
             st.altair_chart(
                 create_bar_chart(
                     data, "category:N", "value:Q", "type:N", stack_option, orientation
@@ -207,22 +213,23 @@ with tab1:
                 ),
                 use_container_width=True,
             )
-        st.altair_chart(
-            create_area_chart(area_chart_one_data, stack_option),
-            use_container_width=True,
-        )
-        st.altair_chart(
-            create_area_chart(area_chart_two_data, stack_option),
-            use_container_width=True,
-        )
-        st.altair_chart(
-            create_area_chart(area_chart_one_data, stack_option, orientation),
-            use_container_width=True,
-        )
-        st.altair_chart(
-            create_area_chart(area_chart_two_data, stack_option, orientation),
-            use_container_width=True,
-        )
+        if not disabled_area:
+            st.altair_chart(
+                create_area_chart(area_chart_one_data, stack_option),
+                use_container_width=True,
+            )
+            st.altair_chart(
+                create_area_chart(area_chart_two_data, stack_option),
+                use_container_width=True,
+            )
+            st.altair_chart(
+                create_area_chart(area_chart_one_data, stack_option, orientation),
+                use_container_width=True,
+            )
+            st.altair_chart(
+                create_area_chart(area_chart_two_data, stack_option, orientation),
+                use_container_width=True,
+            )
 
 with tab2:
     area_chart_one_data = area_chart_one_data.set_index("index")
@@ -230,13 +237,14 @@ with tab2:
     if show_data:
         col1, col2 = st.columns(2)
         with col1:
-            if not disabled_horizontal:
+            if not disabled_horizontal and not disabled_bar:
                 st.dataframe(data, use_container_width=True)
                 st.dataframe(chart_data, use_container_width=True, height=300)
-            st.dataframe(area_chart_one_data, use_container_width=True)
-            st.dataframe(area_chart_two_data, use_container_width=True, height=350)
+            if not disabled_area:
+                st.dataframe(area_chart_one_data, use_container_width=True)
+                st.dataframe(area_chart_two_data, use_container_width=True, height=350)
         with col2:
-            if not disabled_horizontal:
+            if not disabled_horizontal and not disabled_bar:
                 st.bar_chart(
                     data,
                     x="category",
@@ -256,10 +264,11 @@ with tab2:
                     stack=stack_option,
                     horizontal=orientation == "horizontal",
                 )
-            st.area_chart(area_chart_one_data, stack=stack_option)
-            st.area_chart(area_chart_two_data, stack=stack_option)
+            if not disabled_area:
+                st.area_chart(area_chart_one_data, stack=stack_option)
+                st.area_chart(area_chart_two_data, stack=stack_option)
     else:
-        if not disabled_horizontal:
+        if not disabled_horizontal and not disabled_bar:
             st.bar_chart(
                 data,
                 x="category",
@@ -279,13 +288,14 @@ with tab2:
                 stack=stack_option,
                 horizontal=orientation == "horizontal",
             )
-        st.area_chart(
-            area_chart_one_data,
-            stack=stack_option,
-            horizontal=orientation == "horizontal",
-        )
-        st.area_chart(
-            area_chart_two_data,
-            stack=stack_option,
-            horizontal=orientation == "horizontal",
-        )
+        if not disabled_area:
+            st.area_chart(
+                area_chart_one_data,
+                stack=stack_option,
+                horizontal=orientation == "horizontal",
+            )
+            st.area_chart(
+                area_chart_two_data,
+                stack=stack_option,
+                horizontal=orientation == "horizontal",
+            )
